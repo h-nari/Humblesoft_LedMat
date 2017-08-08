@@ -1,6 +1,8 @@
 #include "Humblesoft_LedMat.h"
 #include <SPI.h>
 
+Humblesoft_LedMat LedMat;
+
 Humblesoft_LedMat::Humblesoft_LedMat()
   : Humblesoft_GFX(HLM_WIDTH_MAX,HLM_HEIGHT_MAX)
 {
@@ -471,4 +473,27 @@ void Humblesoft_LedMat::setGamma(float fGamma)
       Serial.printf("gamma[%3d]=%3u\n",i, m_aGamma[i]);
     if(i >0 && m_aGamma[i] == 0) m_aGamma[i] = 1;
   }
+}
+
+bool Humblesoft_LedMat::error(const char *fmt, ...)
+{
+  va_list ap;
+  char buf[80];
+  
+  va_start(ap, fmt);
+  vsnprintf(buf, sizeof buf, fmt, ap);
+  va_end(ap);
+
+  LedMat.clear();
+  LedMat.setTextColor("red");
+  LedMat.println("Error:");
+  LedMat.setTextColor("green");
+  LedMat.println(buf);
+  LedMat.display();
+
+  Serial.print("Error:");
+  Serial.println(buf);
+
+  delay(1000);
+  return false;
 }

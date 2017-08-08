@@ -3,45 +3,37 @@
 #include <Humblesoft_GFX.h>			// https://github.com/h-nari/Humblesoft_GFX
 #include <Humblesoft_LedMat.h>	// https://github.com/h-nari/Humblesoft_LedMat
 
-#if 0
-#include <fontx/ILGH16XB.h>
-#include <fontx/ILGZ16XB.h>
-RomFontx fontx(ILGH16XB,ILGZ16XB);
-#endif
-
-Humblesoft_LedMat ledMat;
 uint8_t imgBuf[1024*8];
 
 void demo1()
 {
-	ledMat.clear();
-	ledMat.fillScreen(0);
-	// ledMat.setFont(&fontx);
+	LedMat.clear();
+	LedMat.fillScreen(0);
 
-	ledMat.moveCursor(2,0);
-	ledMat.setTextColor("red");
-	ledMat.print("WiFi");
-	ledMat.setTextColor("green");
-	ledMat.print(" + ");
-	ledMat.setTextColor("blue");
-	ledMat.println("LED");
+	LedMat.moveCursor(2,0);
+	LedMat.setTextColor("red");
+	LedMat.print("WiFi");
+	LedMat.setTextColor("green");
+	LedMat.print(" + ");
+	LedMat.setTextColor("blue");
+	LedMat.println("LED");
 
-	ledMat.moveCursor(2, 0);
-	ledMat.setTextColor("#004040");
-	ledMat.print("on ");
-	ledMat.setTextColor("white");
-	ledMat.println("ARDUINO");
+	LedMat.moveCursor(2, 0);
+	LedMat.setTextColor("#004040");
+	LedMat.print("on ");
+	LedMat.setTextColor("white");
+	LedMat.println("ARDUINO");
 	
-	ledMat.moveCursor(2, 5);
-	ledMat.setTextColor("#ff00ff");
-	ledMat.println("LED MATRIX");
+	LedMat.moveCursor(2, 5);
+	LedMat.setTextColor("#ff00ff");
+	LedMat.println("LED MATRIX");
 
-	ledMat.moveCursor(2, 0);
-	ledMat.setTextColor("#ffff00");
-	ledMat.println("CONTROLLER");
+	LedMat.moveCursor(2, 0);
+	LedMat.setTextColor("#ffff00");
+	LedMat.println("CONTROLLER");
 
-	int x,y = ledMat.getCursorY() + 2;
-	int h = ledMat.height() - y;
+	int x,y = LedMat.getCursorY() + 2;
+	int h = LedMat.height() - y;
 	int w = 64;
 	
 	for(x=0; x<w; x++){
@@ -65,17 +57,17 @@ void demo1()
 			r = g = 255 * xx / q;
 			b = 255;
 		}
-		ledMat.drawFastVLine(x, y, h, ledMat.rgb(r,g,b));
+		LedMat.drawFastVLine(x, y, h, LedMat.rgb(r,g,b));
 	}
 
 	x = 31;
 	y = 52;
 	const char *mes = "FULL COLOR";
-	ledMat.setTextColor("white");
-	ledMat.alignPrintf(x+1, y+1, TA_CENTER, TA_CENTER, mes);
-	ledMat.setTextColor("#001000");
-	ledMat.alignPrintf(x, y, TA_CENTER, TA_CENTER, mes);
-	ledMat.display();
+	LedMat.setTextColor("white");
+	LedMat.alignPrintf(x+1, y+1, TA_CENTER, TA_CENTER, mes);
+	LedMat.setTextColor("#001000");
+	LedMat.alignPrintf(x, y, TA_CENTER, TA_CENTER, mes);
+	LedMat.display();
 }
 
 
@@ -86,8 +78,8 @@ void setup(void)
   Serial.println("\n\nReset:");
 	
   Serial.println("Initialize");
-  ledMat.begin(LMMT64x32s16,1,2);
-	ledMat.setImgBuf(imgBuf, sizeof imgBuf);
+  LedMat.begin(LMMT64x32s16,1,2);
+	LedMat.setImgBuf(imgBuf, sizeof imgBuf);
 
   demo1();
 }
@@ -96,10 +88,10 @@ void loop(void){
 	static int rotation;
 
 	delay(1000);
-	ledMat.checkSubcon();
+	LedMat.checkSubcon();
 	Serial.printf("rotation:%d\n",rotation);
 	rotation = (rotation + 1) % 4;
-	ledMat.setRotation(rotation);
+	LedMat.setRotation(rotation);
 	demo1();
 }
 

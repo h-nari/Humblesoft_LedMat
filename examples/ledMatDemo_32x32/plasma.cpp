@@ -9,7 +9,7 @@
 #include <pgmspace.h>
 #include <Humblesoft_LedMat.h>
 
-extern Humblesoft_LedMat ledMat;
+extern Humblesoft_LedMat LedMat;
 
 static const int8_t PROGMEM sinetab[256] = {
      0,   2,   5,   8,  11,  15,  18,  21,
@@ -66,15 +66,15 @@ void plasma() {
   y3  = (int)(sin(angle3) * radius3 + centery3);
   y4  = (int)(sin(angle4) * radius4 + centery4);
 
-  for(y=0; y<ledMat.height(); y++) {
+  for(y=0; y<LedMat.height(); y++) {
     x1 = sx1; x2 = sx2; x3 = sx3; x4 = sx4;
-    for(x=0; x<ledMat.width(); x++) {
+    for(x=0; x<LedMat.width(); x++) {
       value = hueShift
         + (int8_t)pgm_read_byte(sinetab + (uint8_t)((x1 * x1 + y1 * y1) >> 4))
         + (int8_t)pgm_read_byte(sinetab + (uint8_t)((x2 * x2 + y2 * y2) >> 4))
         + (int8_t)pgm_read_byte(sinetab + (uint8_t)((x3 * x3 + y3 * y3) >> 5))
         + (int8_t)pgm_read_byte(sinetab + (uint8_t)((x4 * x4 + y4 * y4) >> 5));
-      ledMat.drawPixel(x, y, ledMat.colorHSV(value * 3, 255, 255));
+      LedMat.drawPixel(x, y, LedMat.colorHSV(value * 3, 255, 255));
       x1--; x2--; x3--; x4--;
     }
     y1--; y2--; y3--; y4--;
@@ -86,5 +86,5 @@ void plasma() {
   angle4 -= 0.015;
   hueShift += 2;
 
-  ledMat.display();
+  LedMat.display();
 }

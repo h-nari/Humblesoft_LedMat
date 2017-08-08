@@ -4,46 +4,39 @@
 #include <Humblesoft_LedMat.h>	// https://github.com/h-nari/Humblesoft_LedMat
 #include <ScrollText.h>				  // included in Humblesoft_LedMat.h
 
-#if 0
-#include <fontx/ILGH16XB.h>
-#include <fontx/ILGZ16XB.h>
-RomFontx fontx(ILGH16XB,ILGZ16XB);
-#endif
-
-Humblesoft_LedMat ledMat;
-ScrollText scroll(&ledMat);
+ScrollText scroll(&LedMat);
 uint8_t imgBuf[1024*4];
 
 void plasma();
 
 void demo1()
 {
-	ledMat.clear();
+	LedMat.clear();
 
-	ledMat.setCursor(1,0);
-	ledMat.setTextColor("#ff0000");
-	ledMat.print('1');
-	ledMat.setTextColor("#ff8000");
-	ledMat.print('6');
-	ledMat.setTextColor("#ffff00");
-	ledMat.print('x');
-	ledMat.setTextColor("#80ff00");
-	ledMat.print('3');
-	ledMat.setTextColor("#00ff00");
-	ledMat.print('2');
+	LedMat.setCursor(1,0);
+	LedMat.setTextColor("#ff0000");
+	LedMat.print('1');
+	LedMat.setTextColor("#ff8000");
+	LedMat.print('6');
+	LedMat.setTextColor("#ffff00");
+	LedMat.print('x');
+	LedMat.setTextColor("#80ff00");
+	LedMat.print('3');
+	LedMat.setTextColor("#00ff00");
+	LedMat.print('2');
 
-	ledMat.setCursor(1,9);
-	ledMat.setTextColor("#00ffff");
-	ledMat.print('*');
-	ledMat.setTextColor("#0080ff");
-	ledMat.print('R');
-	ledMat.setTextColor("#0000ff");
-	ledMat.print('G');
-	ledMat.setTextColor("#8000ff");
-	ledMat.print('B');
-	ledMat.setTextColor("#ff00ff");
-	ledMat.print('*');
-	ledMat.display();
+	LedMat.setCursor(1,9);
+	LedMat.setTextColor("#00ffff");
+	LedMat.print('*');
+	LedMat.setTextColor("#0080ff");
+	LedMat.print('R');
+	LedMat.setTextColor("#0000ff");
+	LedMat.print('G');
+	LedMat.setTextColor("#8000ff");
+	LedMat.print('B');
+	LedMat.setTextColor("#ff00ff");
+	LedMat.print('*');
+	LedMat.display();
 }
 
 void setup(void)
@@ -53,10 +46,10 @@ void setup(void)
   Serial.println("\n\nReset:");
 	
   Serial.println("Initialize");
-	ledMat.setImgBuf(imgBuf, sizeof(imgBuf));
-  ledMat.begin(LMMT32x16s8);
-  // ledMat.begin(LMMT32x32s16);
-  // ledMat.begin(LMMT64x32s16);
+	LedMat.setImgBuf(imgBuf, sizeof(imgBuf));
+  LedMat.begin(LMMT32x16s8);
+  // LedMat.begin(LMMT32x32s16);
+  // LedMat.begin(LMMT64x32s16);
 
 	scroll.setScrollArea();
 	scroll.setYPos();
@@ -65,28 +58,28 @@ void setup(void)
 }
 
 void loop(void){
-	ledMat.checkSubcon();
+	LedMat.checkSubcon();
 	
 	scroll.scrollOut();
 	while(scroll.update())
 		delay(0);
 
-	ledMat.setBright(20);
+	LedMat.setBright(20);
 	scroll.print("Hello World!");
 	scroll.scrollOut();
 	while(scroll.update())
 		delay(0);
 	delay(1000);
 	
-	ledMat.clear();
-	ledMat.display();
-	ledMat.setBright(20);
+	LedMat.clear();
+	LedMat.display();
+	LedMat.setBright(20);
 	demo1();
 	delay(2000);
 	
-	ledMat.clear();
-	ledMat.display();
-	ledMat.setBright(5);
+	LedMat.clear();
+	LedMat.display();
+	LedMat.setBright(5);
 	for(int i=0; i<200;i++){
 		plasma();
 		delay(10);

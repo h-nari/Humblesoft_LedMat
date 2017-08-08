@@ -165,6 +165,7 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   int16_t width(void) const;
   uint16_t colorHSV(long hue, uint8_t sat, uint8_t val);
   void shiftLeft(int16_t x,int16_t y, uint16_t w, uint16_t h, int16_t shift);
+  bool error(const char *fmt, ...);
   
  protected:
   void cmd_init();
@@ -214,5 +215,7 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
     digitalWrite(LM_CS0, HIGH);
   }
 };
+
+extern Humblesoft_LedMat LedMat;
 
 #endif /* _humblesoft_ledmat_h_ */
