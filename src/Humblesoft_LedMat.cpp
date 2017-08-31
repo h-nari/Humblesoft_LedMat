@@ -91,7 +91,7 @@ void Humblesoft_LedMat::resetSubcon()
   digitalWrite(MCLR_PIN, HIGH);
   pinMode(MCLR_PIN, INPUT);
   delay(100);
-  Serial.printf("MCLR:%d\n", digitalRead(MCLR_PIN));
+  // Serial.printf("MCLR:%d\n", digitalRead(MCLR_PIN));
 }
 
 bool Humblesoft_LedMat::checkSubcon()
@@ -107,8 +107,8 @@ bool Humblesoft_LedMat::checkSubcon()
   }
   
   if(status & HSM_BOOTMODE){
-    Serial.printf("subcon is in bootmode.");
-    return false;
+    Serial.println("subcon is in bootmode.");
+    return true;
   }
 
   if(status & HSM_BOR){
@@ -121,7 +121,7 @@ bool Humblesoft_LedMat::checkSubcon()
     m_bright_max = m_bright;
   }
   
-  if(m_verbose)
+  if(m_verbose > 1)
     Serial.printf(" FVER: %d-%d-%d\n", fver & 0xff,
 		  (fver>>8) & 0xff,(fver >> 16)&0xff);
 
@@ -194,7 +194,7 @@ void Humblesoft_LedMat::drawPixel24(int16_t x, int16_t y, uint32_t color)
 void Humblesoft_LedMat::drawPixelRGB(int16_t x0, int16_t y0,
 				     uint8_t r0, uint8_t g0, uint8_t b0)
 {
-  uint32  offset;
+  uint32_t offset;
   uint8_t shift, r,g,b;
   int16_t x, y;
 
@@ -234,7 +234,7 @@ void Humblesoft_LedMat::drawPixelRGB(int16_t x0, int16_t y0,
 uint32_t Humblesoft_LedMat::getPixel24(int16_t x0, int16_t y0)
 {
   uint32_t pixel = 0;
-  uint32  offset;
+  uint32_t offset;
   uint8_t shift;
   int16_t x, y;
 
@@ -278,21 +278,18 @@ void Humblesoft_LedMat::writeData(uint8_t *data, uint32_t length)
 bool Humblesoft_LedMat::firmwareBegin(uint32_t salt, bool bEncrypt,
 				      uint32_t addr_min, uint32_t addr_max)
 {
-  // boot-modeでなければ bookback
-
   uint8_t s;
   if(!readSubconStatus(&s)) return false;
+  
   if(!(s & HSM_BOOTMODE)){
     if(!bootback_cmd()) return false;
     delay(1);
   }
-
   return write_firmware_cmd(salt, addr_min, addr_max, bEncrypt);
 }
 
 bool Humblesoft_LedMat::firmwareData(const uint8_t *data, uint16_t len)
 {
-  // m_busy = true;
   setBusy(true);
   digitalWrite(LM_CS1, LOW);
   SPI.write((uint8_t)len);
@@ -302,7 +299,7 @@ bool Humblesoft_LedMat::firmwareData(const uint8_t *data, uint16_t len)
     SPI.write(0);
   digitalWrite(LM_CS1, HIGH);
 
-  if(!cmd_wait_busy())
+  if(!cmd_wait_busy(LM_FIRMDATA_TIMEOUT))
     return false;
 
   lm_response_t resp;
@@ -469,7 +466,7 @@ void Humblesoft_LedMat::setGamma(float fGamma)
   m_fGamma = fGamma;
   for(int i=0; i<256; i++){
     m_aGamma[i] = (uint8_t)(pow(i / 255.0f, fGamma) * 255 + 0.5);
-    if(m_verbose)
+    if(m_verbose > 1)
       Serial.printf("gamma[%3d]=%3u\n",i, m_aGamma[i]);
     if(i >0 && m_aGamma[i] == 0) m_aGamma[i] = 1;
   }

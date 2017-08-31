@@ -7,7 +7,7 @@
 #include <MoviePlayer.h>        // included in Humblesoft_LedMat 
 
 uint8_t imgBuf[1024*8];
-// uint8_t imgBuf[1024*16];
+// uint8_t imgBuf[1024*24];
 MoviePlayer moviePlayer;
 
 void error_printf(const char *fmt, ...)
@@ -36,7 +36,7 @@ void setup(void)
   
   LedMat.setTextWrap(true);
   LedMat.clear();
-  LedMat.println("64x32");
+  LedMat.printf("%dx%d\n",LedMat.width(),LedMat.height());
   LedMat.setTextColor("red");
   LedMat.print("R");
   LedMat.setTextColor("green");

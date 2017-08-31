@@ -9,7 +9,7 @@ bool MoviePlayer::begin(const char *path)
   m_file = SD.open(path);
   if(!m_file)
     return LedMat.error("%s not found.\n",path);
-  int n = m_file.read(&m_header, sizeof(m_header));
+  int n = m_file.read((uint8_t *)&m_header, sizeof(m_header));
   if(n != sizeof(m_header))
     return LedMat.error("hlm read header failed. (%d)",n);
   
@@ -34,7 +34,7 @@ bool MoviePlayer::update()
   // Serial.printf("%luus f:%u fps_n:%u fps_d:%u\n",now-m_start,f,fps_n,fps_d);
   
   if(f > 1) {
-    uint32 pos = m_file.position();
+    uint32_t pos = m_file.position();
     pos += (f - 1)* m_header.frame_offset;
     m_file.seek(pos);
   }

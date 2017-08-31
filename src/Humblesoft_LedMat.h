@@ -15,6 +15,9 @@
 
 
 #define LM_CMD_TIMEOUT		10	/* mS */
+#define LM_BOOTBACK_TIMEOUT	500	/* mS */
+#define LM_FIRMDATA_TIMEOUT	100	/* mS */
+#define LM_FIRMBEGIN_TIMEOUT	2000	/* mS */
 
 class Humblesoft_LedMat;
 
@@ -176,8 +179,8 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   void cmd_put32(uint32_t data);
   void cmd_open(uint8_t cmd);
   void cmd_close();
-  bool cmd_send0();
-  bool cmd_send(lm_response_t *resp = NULL);
+  bool cmd_send0(uint32_t ms = LM_CMD_TIMEOUT);
+  bool cmd_send(lm_response_t *resp = NULL, uint32_t ms = LM_CMD_TIMEOUT);
   bool read_response(lm_response_t *resp);
   uint8_t calc_checksum(uint8_t *buf, int len);
   bool is_response_ok(uint8_t *buf, int *pStart, int *pLen);

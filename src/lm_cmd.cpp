@@ -90,7 +90,7 @@ void Humblesoft_LedMat::write_data(uint8_t *buf, uint32_t length)
   spi1_end();
 }
 
-bool Humblesoft_LedMat::cmd_send0()
+bool Humblesoft_LedMat::cmd_send0(uint32_t ms)
 {
   if(m_verbose > 1)
     mem_dump("cmd_send:",m_cmdBuf, m_ci);
@@ -98,12 +98,12 @@ bool Humblesoft_LedMat::cmd_send0()
   spi0_begin();
   SPI.writeBytes(m_cmdBuf, m_ci);
   spi0_end();
-  return cmd_wait_busy();
+  return cmd_wait_busy(ms);
 }
 
-bool Humblesoft_LedMat::cmd_send(lm_response_t *resp)
+bool Humblesoft_LedMat::cmd_send(lm_response_t *resp, uint32_t ms)
 {
-  return cmd_send0() && read_response(resp);
+  return cmd_send0(ms) && read_response(resp);
 }
 
 bool Humblesoft_LedMat::is_response_ok(uint8_t *buf, int *pStart, int *pLen)
@@ -164,22 +164,30 @@ bool Humblesoft_LedMat::readSubconStatus(uint8_t *status,
   
   cmd_open(LMC_STATUS);
   cmd_close();
-  if(!cmd_send(&resp))
+  if(!cmd_send(&resp)){
     return false;
-  if(resp.data_size < 8)
+  }
+  if(resp.data_size != 0 && resp.data_size != 8){
+    Serial.printf("%s:%d data_size:%u\n",__FUNCTION__,__LINE__, resp.data_size);
     return false;
+  }
 
   *status = resp.status;
 
-  if(pFver){
-    for(i=0,v=0; i<4; i++)
-      v |= (resp.data[i] << (i*8));
-    *pFver = v;
-  }
-  if(pConfigId){
-    for(i=0,v=0; i<4; i++)
-      v |= resp.data[i+4] << (i*8);
-    *pConfigId = v;
+  if(resp.data_size == 0){
+    if(pFver)     *pFver = 0;
+    if(pConfigId) *pConfigId = 0;
+  } else {
+    if(pFver){
+      for(i=0,v=0; i<4; i++)
+	v |= (resp.data[i] << (i*8));
+      *pFver = v;
+    }
+    if(pConfigId){
+      for(i=0,v=0; i<4; i++)
+	v |= resp.data[i+4] << (i*8);
+      *pConfigId = v;
+    }
   }
   return true;
 }
@@ -241,7 +249,7 @@ bool Humblesoft_LedMat::write_firmware_cmd(uint32_t salt, uint32_t addr_min,
   cmd_put32(addr_min);
   cmd_put32(addr_max);
   cmd_close();
-  return cmd_send();
+  return cmd_send(NULL, LM_FIRMBEGIN_TIMEOUT);
 }			   
 
 bool Humblesoft_LedMat::boot_cmd()
@@ -255,7 +263,19 @@ bool Humblesoft_LedMat::bootback_cmd()
 {
   cmd_open(LMC_BOOTBACK);
   cmd_close();
-  return cmd_send0();
+#if 0
+  subcon_busy = true;
+  spi0_begin();
+  SPI.writeBytes(m_cmdBuf, m_ci);
+  spi0_end();
+
+  bool b = cmd_wait_busy(LM_BOOTBACK_TIMEOUT);
+  if(!b)
+    Serial.printf("%s:%d timeout\n",__FUNCTION__,__LINE__);
+  return b;
+#else
+  return cmd_send0(LM_BOOTBACK_TIMEOUT);
+#endif
 }
 
 void Humblesoft_LedMat::setBusy(bool b)
@@ -274,13 +294,12 @@ void Humblesoft_LedMat::cmd_init()
   attachInterrupt(digitalPinToInterrupt(LM_BUSY), busy_done, RISING);
 }
 
-#undef BUSY_DEBUG
+// #define BUSY_DEBUG
 
 bool Humblesoft_LedMat::cmd_wait_busy(uint32_t ms)
 {
 #ifdef BUSY_DEBUG
-  Serial.printf("%s:%d this:%lx busy:%d\n",__FUNCTION__,__LINE__,
-		(long)this_module, subcon_busy);
+  Serial.printf("%s:%d busy:%d\n",__FUNCTION__,__LINE__, subcon_busy);
 #endif
   unsigned long start = millis();
   while(subcon_busy){
@@ -296,7 +315,7 @@ bool Humblesoft_LedMat::cmd_wait_busy(uint32_t ms)
     // delay(0);
   }
 #ifdef BUSY_DEBUG
-  Serial.printf("%s:%d exit\n",__FUNCTION__,__LINE__);
+  Serial.printf("%s:%d exit (%lu ms)\n",__FUNCTION__,__LINE__,millis()-start);
 #endif
   return true;
 }
