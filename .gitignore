@@ -32,3 +32,4 @@
 *.app
 
 Makefile
+conf.h
