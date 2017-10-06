@@ -15,6 +15,10 @@ Humblesoft_LedMat::Humblesoft_LedMat()
   m_bGamma = true;
   m_imgBuf = NULL;
   m_imgBufSize = 0;
+
+  m_ledbit_r = 1;
+  m_ledbit_g = 2;
+  m_ledbit_b = 4;
 }
 
 int16_t Humblesoft_LedMat::height(void) const {
@@ -216,9 +220,9 @@ void Humblesoft_LedMat::drawPixelRGB(int16_t x0, int16_t y0,
 #endif
     uint8_t *p = m_imgBuf + offset;
     uint8_t mask = 0x80;
-    uint8_t bitR = LEDBIT_R << shift;
-    uint8_t bitG = LEDBIT_G << shift;
-    uint8_t bitB = LEDBIT_B << shift;
+    uint8_t bitR = m_ledbit_r << shift;
+    uint8_t bitG = m_ledbit_g << shift;
+    uint8_t bitB = m_ledbit_b << shift;
 
     for(int plane=0; plane < m_cPlane && p < m_imgBuf + m_imgBufSize;
 	plane++){
@@ -244,9 +248,9 @@ uint32_t Humblesoft_LedMat::getPixel24(int16_t x0, int16_t y0)
     uint32_t maskR = 0x800000;
     uint32_t maskG = 0x008000;
     uint32_t maskB = 0x000080;
-    uint8_t  bitR = LEDBIT_R << shift;
-    uint8_t  bitG = LEDBIT_G << shift;
-    uint8_t  bitB = LEDBIT_B << shift;
+    uint8_t  bitR = m_ledbit_r << shift;
+    uint8_t  bitG = m_ledbit_g << shift;
+    uint8_t  bitB = m_ledbit_b << shift;
     for(int plane=0; plane < m_cPlane && p < m_imgBuf + sizeof(m_imgBuf);
 	plane++){
       uint8_t bits = *p;
@@ -426,7 +430,8 @@ void Humblesoft_LedMat::shiftLeft(int16_t xx, int16_t yy,
     m_bGamma = false;
     
     uint32_t planeSize = m_param.planeSize();
-    
+
+    uint8_t mask0 = m_ledbit_r|m_ledbit_g|m_ledbit_b;
     for(int y=y0; y<y1; y++){
       for(int xs=x0+shift; xs < x1; xs++){
 #if 0
@@ -440,7 +445,7 @@ void Humblesoft_LedMat::shiftLeft(int16_t xx, int16_t yy,
 	  uint8_t *ps = m_imgBuf + os;
 	  uint8_t *pd = m_imgBuf + od;
 	  uint8_t *pe = m_imgBuf + m_imgBufSize;
-	  uint8_t mask = (LEDBIT_R|LEDBIT_G|LEDBIT_B) << sd;
+	  uint8_t mask = mask0 << sd;
 	  for(int plane=0; plane < m_cPlane && ps < pe && pd < pe; plane++){
 	    if(ss == sd)
 	      *pd = (~mask&*pd) | (mask & *ps);
@@ -481,16 +486,34 @@ bool Humblesoft_LedMat::error(const char *fmt, ...)
   vsnprintf(buf, sizeof buf, fmt, ap);
   va_end(ap);
 
-  LedMat.clear();
-  LedMat.setTextColor("red");
-  LedMat.println("Error:");
-  LedMat.setTextColor("green");
-  LedMat.println(buf);
-  LedMat.display();
+  clear();
+  setTextColor("red");
+  println("Error:");
+  setTextColor("green");
+  println(buf);
+  
+  display();
 
   Serial.print("Error:");
   Serial.println(buf);
 
   delay(1000);
   return false;
+}
+
+void Humblesoft_LedMat::setLedMode(uint8_t mode)
+{
+  switch(mode){
+  case 0:		/* standard HUB-75 LeD Modules */
+    setLedBits(1,2,4);
+    break;
+    
+  case 1:		/* for HSLM-6432P4B */
+    setLedBits(4,1,2);
+    break;
+    
+  default:
+    error("LedMode %u not defined.\n", mode);
+    break;
+  }
 }

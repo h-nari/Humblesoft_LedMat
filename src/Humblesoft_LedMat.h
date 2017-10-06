@@ -72,9 +72,6 @@ struct PacketHeader {
 #define HLM_HEIGHT_MAX 		256
 #define LM_CMD_MAX		 16
 
-#define LEDBIT_R	1
-#define LEDBIT_G	2
-#define LEDBIT_B	4
 #define LM_SHIFT	3
 
 #define HSM_BOOTMODE	(1 << 0)	// bootmode
@@ -117,7 +114,10 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   int	    m_configId;	
   uint8_t   m_cmdBuf[LM_CMD_MAX];
   bool      m_bGamma;
-  float	    m_fGamma;	
+  float	    m_fGamma;
+  uint8_t   m_ledbit_r;	
+  uint8_t   m_ledbit_g;	
+  uint8_t   m_ledbit_b;	
   uint8_t   m_aGamma[256];
 
   int       m_verbose;
@@ -168,7 +168,13 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   int16_t width(void) const;
   uint16_t colorHSV(long hue, uint8_t sat, uint8_t val);
   void shiftLeft(int16_t x,int16_t y, uint16_t w, uint16_t h, int16_t shift);
+  void setLedBits(uint8_t r, uint8_t g, uint8_t b) {
+    m_ledbit_r = r;
+    m_ledbit_g = g;
+    m_ledbit_b = b;
+  }
   bool error(const char *fmt, ...);
+  void setLedMode(uint8_t mode);
   
  protected:
   void cmd_init();
