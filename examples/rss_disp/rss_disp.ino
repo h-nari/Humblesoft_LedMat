@@ -162,7 +162,7 @@ void date_disp(LayoutElem *elem, bool bInit)
     LedMat.setTextColor("yellow","black");
     LedMat.setTextSize(textSize);
 		LedMat.alignPrintf(x+w/2,y, TA_CENTER, TA_TOP,
-											 "%d/%d(%s)", 
+											 "%d/%d(%s)",
 											 tm->tm_mon+1, tm->tm_mday, wd[tm->tm_wday]);
     t0 = dt;
 	}
@@ -197,8 +197,9 @@ void setup()
   LedMat.begin();
 	LedMat.setImgBuf(imgBuf, sizeof imgBuf);
 	LedMat.setPlane(1);
-	LedMat.setLedMode(1);			// for HSLM-6432P4B
+	// LedMat.setLedMode(1);			// for HSLM-6432P4B
   LedMat.setRotation(0);
+  LedMat.setBright(2);          // 1..100
   LedMat.clear();
   LedMat.display();
   scroll.setTextSize(1);
