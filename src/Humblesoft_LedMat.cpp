@@ -7,6 +7,7 @@ Humblesoft_LedMat::Humblesoft_LedMat()
   : Humblesoft_GFX(HLM_WIDTH_MAX,HLM_HEIGHT_MAX)
 {
   m_enable  = false;
+  m_sdEnable = false;
   m_verbose = 0;
   m_cPlane  = 4;
   m_bright  = 16;
@@ -49,8 +50,10 @@ bool Humblesoft_LedMat::begin(LMModuleType mtype, uint8_t col, uint8_t row,
   SPI.begin();
   if(SD.begin(SD_CS)) {
     Serial.printf("initialize SD Card done.\n");
+    m_sdEnable = true;
   } else {
     Serial.printf("initialise SD Card failed.\n");
+    m_sdEnable = false;
   }
 
   m_param.set(mtype, col, row, lt);

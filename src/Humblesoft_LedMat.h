@@ -103,6 +103,7 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   
  protected:
   bool      m_enable;
+  bool      m_sdEnable;
   HLMParam  m_param;
   uint8_t   m_cPlane;
   uint8_t   m_bright;
@@ -132,7 +133,8 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   void resetSubcon();
   bool checkSubcon();
   
-  bool setConf(LMModuleType mtype, uint8_t col, uint8_t row,LMLayoutType lt);
+  bool setConf(LMModuleType mtype, uint8_t col=1, uint8_t row=1,
+	       LMLayoutType lt=LT_Normal);
   void setPlane(uint8_t cPlane);
   uint8_t getPlane() { return m_cPlane;}
   bool enableGammaCorrection(bool b) {
@@ -175,6 +177,7 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   }
   bool error(const char *fmt, ...);
   void setLedMode(uint8_t mode);
+  bool sdEnable() {return m_sdEnable;};
   
  protected:
   void cmd_init();
