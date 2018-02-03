@@ -161,6 +161,7 @@ void date_disp(LayoutElem *elem, bool bInit)
     const char *wd[7] = {"Sun","Mon","Tue","Wed","Thr","Fri","Sat"};
     LedMat.setTextColor("yellow","black");
     LedMat.setTextSize(textSize);
+		LedMat.fillRect(x, y, w, h, 0);
 		LedMat.alignPrintf(x+w/2,y, TA_CENTER, TA_TOP,
 											 "%d/%d(%s)",
 											 tm->tm_mon+1, tm->tm_mday, wd[tm->tm_wday]);
@@ -214,6 +215,13 @@ void setup()
 	LedMat.setCursor(0,0);
 	LedMat.println("connecting to network");
 	LedMat.display();
+
+	uint8_t mac[6];
+	WiFi.macAddress(mac);
+	Serial.print("mac:");
+	for(int i=0;i<6;i++)
+		Serial.printf("%c%02x",i>0?'-':' ',mac[i]);
+	Serial.println();
 
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	while(WiFi.status() != WL_CONNECTED) {
