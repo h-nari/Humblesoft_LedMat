@@ -1,5 +1,3 @@
-#include "conf.h"
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
@@ -18,6 +16,10 @@
 #include "layout.h"
 
 #define DAYSEC  (3600*24)
+
+#define WIFI_SSID 	  "your_wifi_ssid"
+#define	WIFI_PASSWORD	"your_wifi_password"
+
 
 void date_disp(LayoutElem *elem, bool bInit);
 void time_disp(LayoutElem *elem, bool bInit);
