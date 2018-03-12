@@ -43,7 +43,7 @@ void setup(void)
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-	configTime( JST, 0, "ntp.nict.jp", "ntp.jst.mfeed.ad.jp", "192.168.0.28");
+	configTime( JST, 0, "ntp.nict.jp", "ntp.jst.mfeed.ad.jp");
 }
 
 void loop(void){
