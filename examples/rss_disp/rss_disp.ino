@@ -197,12 +197,12 @@ void setup()
   delay(100);
   Serial.println("\n\nReset:");
 
-  LedMat.begin();
+  LedMat.begin(LMMT64x32s16,1,1);
 	LedMat.setImgBuf(imgBuf, sizeof imgBuf);
 	LedMat.setPlane(1);
 	LedMat.setLedMode(1);			// for HSLM-6432P4B
   LedMat.setRotation(0);
-  LedMat.setBright(10);          // 1..100
+  LedMat.setBright(10);     // 1..100
   LedMat.clear();
   LedMat.display();
   scroll.setTextSize(1);
