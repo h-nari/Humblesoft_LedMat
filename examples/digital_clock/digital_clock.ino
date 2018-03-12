@@ -26,8 +26,9 @@ void setup(void)
 	
   Serial.println("Initialize");
   LedMat.begin(LMMT64x32s16,1,1);
+	LedMat.setLedMode(1);			// for HSLM-6432P4B
 	LedMat.setImgBuf(imgBuf, sizeof imgBuf);
-	LedMat.setBright(2);
+	LedMat.setBright(10);
 	LedMat.clear();
 	LedMat.println("Clock");
 	LedMat.display();
