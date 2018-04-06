@@ -16,7 +16,7 @@ class ScrollText : public Print {
   uint8_t 	m_ri;		// bitmap read index
   uint8_t	m_gw;		// glyph width
   uint8_t	m_gh;		// glyph height
-  uint8_t	m_oy;		// y offset
+  int8_t	m_oy;		// y offset
   int16_t	m_scx;		// scroll area x
   int16_t	m_scy;		// scroll area y
   uint16_t	m_scw;		// scroll area w
