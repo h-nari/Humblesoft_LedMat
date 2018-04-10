@@ -183,6 +183,9 @@ void Humblesoft_LedMat::posRotate(int16_t x, int16_t y, uint8_t r,
 
 void Humblesoft_LedMat::drawPixel(int16_t x, int16_t y, uint16_t color)
 {
+  if(m_bClippingArea && (x < m_cx0 || x >= m_cx1 || y < m_cy0 || y >= m_cy1))
+    return;
+  
   uint8_t r = (color >> 8) & 0xf8;
   uint8_t g = (color >> 3) & 0xfc;
   uint8_t b = (color << 3) & 0xf8;

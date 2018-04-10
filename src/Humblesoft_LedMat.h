@@ -121,6 +121,9 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   uint8_t   m_ledbit_b;	
   uint8_t   m_aGamma[256];
 
+  bool      m_bClippingArea;
+  int16_t   m_cx0, m_cy0, m_cx1, m_cy1;		// Clipping area
+
   int       m_verbose;
   // volatile bool m_busy;
   
@@ -178,6 +181,18 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   bool error(const char *fmt, ...);
   void setLedMode(uint8_t mode);
   bool sdEnable() {return m_sdEnable;};
+  void setClippingArea(int16_t x, int16_t y, uint16_t w, uint16_t h){
+    m_bClippingArea = true;
+    m_cx0 = x;
+    m_cy0 = y;
+    m_cx1 = x + w;
+    m_cy1 = y + h;
+  }
+  
+  void unsetClippingArea()
+  {
+    m_bClippingArea = false;
+  }
   
  protected:
   void cmd_init();
