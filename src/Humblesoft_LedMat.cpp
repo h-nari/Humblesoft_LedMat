@@ -432,6 +432,11 @@ void Humblesoft_LedMat::shiftLeft(int16_t xx, int16_t yy,
     if(x1 > _width)  x1 = _width;
     if(y1 > _height) y1 = _height;
 
+    if(m_param.m_layoutType == LT_Normal){
+      shiftLeftNormal(x0, y0, x1, y1, shift);
+      return; 
+    }
+
     bool bGamma0 = m_bGamma;
     m_bGamma = false;
     
@@ -471,6 +476,46 @@ void Humblesoft_LedMat::shiftLeft(int16_t xx, int16_t yy,
   }
 }
 
+void Humblesoft_LedMat::shiftLeftNormal(int16_t x0, int16_t y0,int16_t x1,
+					int16_t y1, int16_t shift)
+{
+  uint32_t planeSize = m_param.planeSize();
+  uint32_t bpl       = m_param.bufWidth();
+  uint8_t mask0 = m_ledbit_r|m_ledbit_g|m_ledbit_b;
+  uint8_t scan  = m_param.m_scan;
+
+  for(int y=y0; y<y1; y++){
+    uint8_t *p;
+    bool    copy_byte = false;
+    uint8_t  mask;
+    uint32_t pos;
+    uint8_t  bitShift; 
+    
+    if(!m_param.getPixelPos(0, y, &pos, &bitShift)){
+      Serial.printf("%s:%d getPixelPos Error\n",__FUNCTION__,__LINE__);
+      pos = 0;
+    }
+    
+    if(bitShift == 0){       			// lower scan
+      if(y + scan < y1) copy_byte = true;	// copy both pixel
+      else mask = mask0; 			// copy lower pixel
+    } else {					// higher scan
+      if(y - scan >= y0) mask = 0;		// already copied, do nothing
+      else mask = mask0 << bitShift; 		// copy higher pixel
+    }
+
+    p = m_imgBuf + pos;
+  
+    for(int plane=0; plane < m_cPlane; plane ++){
+      if(copy_byte)
+	memcpy(p + x0, p + x0 + shift, x1 - x0 - shift);
+      else if(mask)
+	for(int xs = x0 + shift; xs < x1; xs++)
+	  p[xs-shift] =  p[xs] & mask |  p[xs-shift] & ~mask;
+      p += planeSize;
+    }
+  }
+}
 
 void Humblesoft_LedMat::setGamma(float fGamma)
 {

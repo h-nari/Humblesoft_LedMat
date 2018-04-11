@@ -49,7 +49,7 @@ class HLMParam {
 
  public:
   HLMParam();
-  bool set(LMModuleType type,uint8_t col,uint8_t row,LMLayoutType=LT_Turnback);
+  bool set(LMModuleType type,uint8_t col,uint8_t row,LMLayoutType=LT_Normal);
   uint32_t bufWidth() const;		// 1行換算幅
   uint32_t planeSize()const;		// 1planeのbyte数
   uint16_t getWidth() const;
@@ -241,6 +241,9 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
     digitalWrite(LM_CS1, HIGH);
     digitalWrite(LM_CS0, HIGH);
   }
+
+  void shiftLeftNormal(int16_t x0, int16_t y0,int16_t x1, int16_t y1,
+		       int16_t shift);
 };
 
 extern Humblesoft_LedMat LedMat;
