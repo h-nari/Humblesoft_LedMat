@@ -63,8 +63,9 @@ bool ScrollText::update(bool bInit)
 	int16_t x1,y1;
 	uint16_t w, h;
 	m_bitmap.getTextBounds(str, 0, 0, &x1, &y1, &w, &h);
-	m_gw = w;
-	m_gh = h;
+	m_gw = w + 1;
+	m_gh = h + 1;
+	m_bitmap.fillRect(0,0,m_gw,m_gh, 0);
 	m_bitmap.setCursor(0,0);
 	m_bitmap.print(str);
 	m_ri = 0;
