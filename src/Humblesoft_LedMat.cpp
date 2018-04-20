@@ -84,7 +84,11 @@ uint8_t *Humblesoft_LedMat::getImgBuf(uint32_t *pLength)
 
 void Humblesoft_LedMat::setPlane(uint8_t cPlane)
 {
-  m_cPlane = cPlane;
+  if(m_cPlane != cPlane){
+    m_cPlane = cPlane;
+    set_write_pos_cmd();
+    set_disp_pos_cmd();
+  }
 }
 
 void Humblesoft_LedMat::resetSubcon()
