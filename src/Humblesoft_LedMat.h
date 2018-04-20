@@ -188,6 +188,11 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
     m_cx1 = x + w;
     m_cy1 = y + h;
   }
+
+  void clear() override {
+    m_bClippingArea = false;
+    Humblesoft_GFX::clear();
+  }
   
   void unsetClippingArea()
   {
