@@ -2,6 +2,8 @@
 
 MoviePlayer::MoviePlayer()
 {
+  m_fSpeed = 1.0f;
+  
 }
 
 bool MoviePlayer::begin(const char *path)
@@ -17,10 +19,10 @@ bool MoviePlayer::begin(const char *path)
   if(m_header.width != LedMat.width() || m_header.height != LedMat.height())
     goto error;
   if(m_header.scan != LedMat.scan()) goto error;
-  m_file.seek(m_header.frame_start);
-  m_start = micros();
+  // m_file.seek(m_header.frame_start);
+  seek(0U);
   m_vEndFrame = false;		// m_endFrame無効
-  m_cFrame = m_cSkip = 0;
+  m_cSkip = 0;
   
   return true;
  error:
@@ -89,15 +91,15 @@ bool MoviePlayer::seek(float fTime)
   int d = m_header.fps_denominator; 
   uint32_t f = (int)(fTime * n / d + 0.5);
   
-  Serial.printf("%s(%d) frame:%u\n",__FUNCTION__,__LINE__,f);
-  
   return seek(f);
 }
 
 bool MoviePlayer::seek(uint32_t frame)
 {
   uint32_t pos = m_header.frame_start + m_header.frame_offset * frame;
-
+  m_cFrame = frame;
+  m_start = micros();
+  
   return m_file.seek(pos);
 }
 
@@ -106,7 +108,6 @@ bool MoviePlayer::setEnd(float fTime)
   int n = m_header.fps_numerator;
   int d = m_header.fps_denominator; 
   uint32_t f = (int)(fTime * n / d + 0.5);
-  Serial.printf("%s(%d) frame:%u\n",__FUNCTION__,__LINE__,f);
   return setEnd(f);
 }
 

@@ -20,6 +20,7 @@ void setup(void)
   LedMat.setImgBuf(imgBuf, sizeof(imgBuf));
   LedMat.setBright(10);    
   LedMat.setPlane(8);
+	LedMat.setLedMode(1);
   
   LedMat.setTextWrap(true);
   LedMat.clear();
@@ -33,19 +34,25 @@ void setup(void)
   LedMat.display();
 }
 
-int  cnt;
-File dir;
-
 void loop(void){
+	static int cnt;
   LedMat.checkSubcon();
 
   if(!moviePlayer.update()){
-    LedMat.clear();
-    LedMat.display();
-    delay(1000);
-    if(!moviePlayer.begin("/movie.hlm"))
-      LedMat.printf("Error");
-  }
+		if(!moviePlayer.begin("/movie.hlm")){
+			LedMat.printf("Error");
+			delay(10000);
+		} else {
+			delay(3000);
+			LedMat.clear();
+			LedMat.setTextColor("white");
+			LedMat.alignPrintf( LedMat.width()/2, LedMat.height()/2,
+													TA_CENTER, TA_CENTER, "PLAY #%d",++cnt);
+			LedMat.display();
+			delay(3000);
+			moviePlayer.seek(0U);
+		}
+	}
 }
 
 
