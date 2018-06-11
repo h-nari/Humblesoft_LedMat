@@ -198,6 +198,7 @@ class Humblesoft_LedMat : public Humblesoft_GFX {
   {
     m_bClippingArea = false;
   }
+  uint8_t scan(){   return m_param.m_scan;  }
   
  protected:
   void cmd_init();
