@@ -32,22 +32,23 @@ void setup(void)
   LedMat.setTextColor("blue");
   LedMat.println("B");
   LedMat.display();
-	
 	delay(3000);
-	moviePlayer.begin("/movie.hlm");
 }
 
 void loop(void){
-	static bool bDone = false;
+	static int cnt;
+  LedMat.checkSubcon();
 
-	if(!bDone && !moviePlayer.update()){
-		bDone = true;
-		delay(1000);
+  if(!moviePlayer.update()){
+		moviePlayer.begin("/movie.hlm");
 		LedMat.clear();
 		LedMat.setTextColor("white");
 		LedMat.alignPrintf( LedMat.width()/2, LedMat.height()/2,
-												TA_CENTER, TA_CENTER, "Done.");
+													TA_CENTER, TA_CENTER, "PLAY #%d",++cnt);
 		LedMat.display();
+		delay(3000);
+		moviePlayer.seek(0U);
+		Serial.printf("*** PLAY #%d ***\n",cnt);
 	}
 }
 

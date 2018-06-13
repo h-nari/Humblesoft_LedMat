@@ -41,6 +41,9 @@ bool MoviePlayer::update()
   uint16_t f = (now - m_start) * m_fSpeed * fps_n / fps_d / 1000000; 
 
   // Serial.printf("%luus f:%u fps_n:%u fps_d:%u\n",now-m_start,f,fps_n,fps_d);
+
+  if(f > 1 && f + m_cFrame > m_header.frames)
+    f = m_header.frames - m_cFrame;
   
   if(f > 1) {
     uint32_t pos = m_file.position();
@@ -61,7 +64,7 @@ bool MoviePlayer::update()
       if(n < 0) return LedMat.error("hlm file read error");
       if(n == 0){
 	m_file.close();
-	return false;
+	return LedMat.error("movie:unexpected EOF");;
       }
       dataLen -= n;
     }
@@ -74,9 +77,10 @@ bool MoviePlayer::update()
   }
   m_cFrame += f;
 
-  if(m_vEndFrame && m_cFrame >= m_endFrame)
+  if(m_vEndFrame && m_cFrame >= m_endFrame || m_cFrame >= m_header.frames){
+    m_file.close();
     return false;
-  else
+  }else
     return true;
 }
 
