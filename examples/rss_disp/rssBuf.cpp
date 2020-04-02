@@ -10,6 +10,7 @@ void RssBuf::clear()
   m_sTitle = "";
   m_iBuf = 0;
   m_iItem = 0;
+  m_iItemMax = -1;
 }
 
 void RssBuf::addItem(const char *str)

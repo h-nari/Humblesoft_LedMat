@@ -11,6 +11,7 @@ class RssBuf {
   String m_sTitle;	// site title
   int  m_iBuf;		// write index
   int  m_iItem;		// item index
+  int  m_iItemMax;
   char m_sBuf[RssBufMax];
   char *m_aItem[RssBufItemMax];
 
@@ -22,7 +23,8 @@ class RssBuf {
   const char *getTitle() { return m_sTitle.c_str();}
   int getItemCount() {return m_iItem;}
   const char* getItem(int idx);
-  
+  void setItemMax(int v){ m_iItemMax = v;}
+  bool isFull() { return m_iItemMax > 0 && m_iItem >= m_iItemMax;}
 };
 
 #endif /* _rss_buf_h_ */
