@@ -284,7 +284,7 @@ void Humblesoft_LedMat::setBusy(bool b)
 }
 
 
-static void busy_done()
+ICACHE_RAM_ATTR static void busy_done()
 {
   subcon_busy = false;
 }
