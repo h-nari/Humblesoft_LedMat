@@ -13,13 +13,15 @@
 #include <time.h>
 
 #include "layout.h"
+#include "lightSensor.h"
 #include "rssBuf.h"
 #include "rssParser.h"
 
-#define DAYSEC (3600 * 24)
+#define HOURSEC 3600
 
-#define WIFI_SSID "your_wifi_ssid"
-#define WIFI_PASSWORD "your_wifi_passwd"
+#include "conf.h"
+// #define WIFI_SSID "your_wifi_ssid"
+// #define WIFI_PASSWORD "your_wifi_passwd"
 
 void date_disp(LayoutElem *elem, bool bInit);
 void time_disp(LayoutElem *elem, bool bInit);
@@ -203,9 +205,9 @@ void date_disp(LayoutElem *elem, bool bInit) {
   uint8_t textSize = h > 16 ? 2 : 1;
   static time_t t0;
   time_t t = time(NULL);
-  time_t dt = t / DAYSEC * DAYSEC;
-
-  if (bInit || dt != t0) {
+  time_t mt = t / 60 * 60;
+  
+  if (bInit || mt != t0) {
     struct tm *tm = localtime(&t);
     const char *wd[7] = {"Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"};
     LedMat.setTextColor("yellow", "black");
@@ -213,7 +215,7 @@ void date_disp(LayoutElem *elem, bool bInit) {
     LedMat.fillRect(x, y, w, h, 0);
     LedMat.alignPrintf(x + w / 2, y, TA_CENTER, TA_TOP, "%d/%d(%s)",
                        tm->tm_mon + 1, tm->tm_mday, wd[tm->tm_wday]);
-    t0 = dt;
+    t0 = mt;
   }
 }
 
@@ -244,7 +246,7 @@ void setup() {
   LedMat.begin(LMMT64x32s16, 1, 1);
   LedMat.setImgBuf(imgBuf, sizeof imgBuf);
   LedMat.setPlane(1);
-  LedMat.setLedMode(1);  // for HSLM-6432P4B,色が変だったら値を0に変える 
+  LedMat.setLedMode(0);  // for HSLM-6432P4B,色が変だったら値を0に変える
   LedMat.setRotation(0);
   LedMat.setBright(10);  // 1..100
   LedMat.clear();
@@ -262,6 +264,27 @@ void setup() {
   LedMat.println("connecting to network");
   LedMat.display();
 
+  light_sensor_init();
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  unsigned long tStart = millis();
+  while (WiFi.status() != WL_CONNECTED) {
+    LedMat.print('.');
+    LedMat.display();
+    if (millis() - tStart > 20 * 1000){ 
+      Serial.printf("\nStatus:%d\n\n", WiFi.status());
+      delay(1000);
+      ESP.restart();
+    }
+    delay(500);
+    Serial.print('.');
+  }
+  Serial.println();
+  Serial.printf("Connected, IP address: ");
+  Serial.println(WiFi.localIP());
+  LedMat.print("\nIP address: ");
+  LedMat.println(WiFi.localIP());
   uint8_t mac[6];
   WiFi.macAddress(mac);
   Serial.print("mac:");
@@ -269,22 +292,7 @@ void setup() {
     Serial.printf("%c%02x", i > 0 ? '-' : ' ', mac[i]);
   Serial.println();
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  unsigned long tStart = millis();
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print('.');
-    LedMat.print('.');
-    LedMat.display();
-    delay(500);
-    if (millis() - tStart > 20 * 1000) ESP.restart();
-  }
-  Serial.println();
-  Serial.printf("Connected, IP address: ");
-  Serial.println(WiFi.localIP());
-  LedMat.print("\nIP address: ");
-  LedMat.println(WiFi.localIP());
-
-  configTime(9 * 3600, 0, "ntp.nict.jp", "ntp.jst.mfeed.ad.jp", NULL);
+  configTzTime("JST-9", "ntp.nict.jp", "ntp.jst.mfeed.ad.jp", NULL);
 
   gState = AS_READ;
 
@@ -295,7 +303,10 @@ void setup() {
   LedMat.display();
 }
 
-void loop() { layout_update(&layouts[iLayout]); }
+void loop() {
+  layout_update(&layouts[iLayout]);
+  light_sensor_update();
+}
 
 /*** Local variables: ***/
 /*** tab-width:2 ***/
