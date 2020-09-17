@@ -44,7 +44,7 @@ typedef struct {
   const char *figerprint;
 } site_t;
 
-const char *yahoo_fingerprint = "2c4cc1be32d3a6021bbce7f918290af709972130";
+const char *yahoo_fingerprint = "1E8BB7F438189245FCC779DD4DA9912BBC2F70CF";
 
 const site_t site[] = {
     {"Yahoo News", 20, "https://news.yahoo.co.jp/pickup/rss.xml",
@@ -235,6 +235,7 @@ void time_disp(LayoutElem *elem, bool bInit) {
     LedMat.alignPrintf(x + w / 2, y, TA_CENTER, TA_TOP, "%02d:%02d:%02d",
                        tm->tm_hour, tm->tm_min, tm->tm_sec);
     t0 = t;
+    LedMat.display();
   }
 }
 
