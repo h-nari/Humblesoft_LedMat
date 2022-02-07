@@ -44,29 +44,27 @@ typedef struct {
   const char *figerprint;
 } site_t;
 
-const char *yahoo_fingerprint = "1E8BB7F438189245FCC779DD4DA9912BBC2F70CF";
+// SHA-1, until 2023/02/26 23:59:00(Asia/Tokyo)
+const char *yahoo_fingerprint = "00a78e7e625144d7d6289fcd533dc336b6715f9b";
 
 const site_t site[] = {
-    {"Yahoo News", 20, "https://news.yahoo.co.jp/pickup/rss.xml",
+    {"Yahoo News 主要", 20, "https://news.yahoo.co.jp/rss/topics/top-picks.xml",
      yahoo_fingerprint},
-    {"BBC", 20, "https://headlines.yahoo.co.jp/rss/bbc-c_int.xml",
+    {"国際", 20, "https://news.yahoo.co.jp/rss/topics/world.xml",
      yahoo_fingerprint},
-    {"CNN", 20, "https://headlines.yahoo.co.jp/rss/cnn-c_int.xml",
+    {"エンタメ", 20, "https://news.yahoo.co.jp/rss/topics/entertainment.xml",
      yahoo_fingerprint},
     {"お笑いナタリー", 10,
      "https://headlines.yahoo.co.jp/rss/natalieo-c_ent.xml", yahoo_fingerprint},
-    {"アスキー", 20, "https://headlines.yahoo.co.jp/rss/ascii-c_sci.xml",
+    {"地域", 20, "https://news.yahoo.co.jp/rss/topics/local.xml",
      yahoo_fingerprint},
-    {"熊日新聞", 20, "https://headlines.yahoo.co.jp/rss/kumanichi-loc.xml",
+    {"スポーツ", 20, "https://news.yahoo.co.jp/rss/topics/sports.xml",
      yahoo_fingerprint},
-    {"Yahoo Sports", 10, "https://news.yahoo.co.jp/pickup/sports/rss.xml",
+    {"経済", 20, "https://news.yahoo.co.jp/rss/topics/business.xml",
      yahoo_fingerprint},
-    {"Yahoo IT", 10, "https://news.yahoo.co.jp/pickup/computer/rss.xml",
+    {"IT", 20, "https://news.yahoo.co.jp/rss/topics/it.xml", yahoo_fingerprint},
+    {"科学", 20, "https://news.yahoo.co.jp/rss/topics/science.xml",
      yahoo_fingerprint},
-    {"sankei", 10, "https://headlines.yahoo.co.jp/rss/san-dom.xml",
-     yahoo_fingerprint},
-    {"Make", 5, "https://feeds.feedburner.com/make_jp",
-     "058b82bcfeb3f43afa4f7745d2d048e36e29bdce"},
     {NULL},
 };
 
@@ -206,7 +204,7 @@ void date_disp(LayoutElem *elem, bool bInit) {
   static time_t t0;
   time_t t = time(NULL);
   time_t mt = t / 60 * 60;
-  
+
   if (bInit || mt != t0) {
     struct tm *tm = localtime(&t);
     const char *wd[7] = {"Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"};
@@ -273,7 +271,7 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     LedMat.print('.');
     LedMat.display();
-    if (millis() - tStart > 20 * 1000){ 
+    if (millis() - tStart > 20 * 1000) {
       Serial.printf("\nStatus:%d\n\n", WiFi.status());
       delay(1000);
       ESP.restart();

@@ -22,6 +22,6 @@ void light_sensor_update(void) {
       b = 10;
     LedMat.setBright(b);
 
-    Serial.printf("TOUT: %4d  bright:%d\n", val, b);
+    // Serial.printf("TOUT: %4d  bright:%d\n", val, b);
   }
 }
